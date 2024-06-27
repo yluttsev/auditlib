@@ -1,7 +1,5 @@
 package ru.luttsev.springbootstarterauditlib;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.test.appender.ListAppender;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -41,11 +39,23 @@ public class AuditLogTests {
         Mockito.when(joinPoint.getArgs()).thenReturn(new Object[]{"arg1", "arg2"});
     }
 
+    @Test
+    public void testMethodLoggingAfterExecute() throws Throwable {
+        ListAppender listAppender = new ListAppender("ListAppender1");
+        loggingAspect.addAppender(listAppender);
+        Mockito.when(joinPoint.proceed()).thenReturn("result");
+
+        listAppender.start();
+        loggingAspect.logMethod(joinPoint, auditLog);
+
+        Assertions.assertEquals(getLogMessages(listAppender).get(0),
+                "Method name: test; Args: arg1, arg2; Return: result");
+    }
 
     @Test
     public void testMethodLoggingAfterThrowing() throws Throwable {
-        ListAppender listAppender = new ListAppender("ListAppender1");
-        ((Logger) LogManager.getLogger(LoggingAspect.class)).addAppender(listAppender);
+        ListAppender listAppender = new ListAppender("ListAppender2");
+        loggingAspect.addAppender(listAppender);
         Mockito.when(joinPoint.proceed()).thenThrow(IllegalArgumentException.class);
 
         listAppender.start();
@@ -54,20 +64,8 @@ public class AuditLogTests {
                 () -> Assertions.assertThrows(IllegalArgumentException.class,
                         () -> loggingAspect.logMethod(joinPoint, auditLog)),
                 () -> Assertions.assertEquals(getLogMessages(listAppender).get(0),
-                        "Method: test; Args: arg1, arg2 throw java.lang.IllegalArgumentException")
+                        "Method name: test; Args: arg1, arg2; Throw: java.lang.IllegalArgumentException")
         );
-    }
-
-    @Test
-    public void testMethodLoggingAfterExecute() throws Throwable {
-        ListAppender listAppender = new ListAppender("ListAppender2");
-        ((Logger) LogManager.getLogger(LoggingAspect.class)).addAppender(listAppender);
-        Mockito.when(joinPoint.proceed()).thenReturn("result");
-
-        listAppender.start();
-        loggingAspect.logMethod(joinPoint, auditLog);
-
-        Assertions.assertEquals(getLogMessages(listAppender).get(0), "Method: test; Args: arg1, arg2 return result");
     }
 
     private List<String> getLogMessages(ListAppender listAppender) {
