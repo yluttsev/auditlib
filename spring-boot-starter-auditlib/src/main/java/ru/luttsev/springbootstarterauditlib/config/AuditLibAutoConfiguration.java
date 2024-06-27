@@ -13,18 +13,30 @@ import ru.luttsev.springbootstarterauditlib.aspect.LoggingAspect;
 
 import java.util.Objects;
 
+/**
+ * Автоконфигурация библиотеки
+ * @author Yuri Luttsev
+ */
 @Configuration
 @ComponentScan("ru.luttsev.springbootstarterauditlib")
 @PropertySource("classpath:application.properties")
 @EnableConfigurationProperties(AppenderConfig.class)
 public class AuditLibAutoConfiguration {
 
+    /**
+     * {@link AppenderConfig Конфигурация} в properties файле
+     */
     private final AppenderConfig appenderConfig;
 
     public AuditLibAutoConfiguration(AppenderConfig appenderConfig) {
         this.appenderConfig = appenderConfig;
     }
 
+    /**
+     * Настройка {@link LoggingAspect аспекта} для логирования<br>
+     * Устанавливает аппендер, указанный в application.properties
+     * @return {@link LoggingAspect аспект} для логирования
+     */
     @Bean
     public LoggingAspect loggingAspect() {
         LoggingAspect loggingAspect = new LoggingAspect();
@@ -49,6 +61,12 @@ public class AuditLibAutoConfiguration {
         throw new IllegalArgumentException("One or more logging parameters are not specified in the application.properties file");
     }
 
+    /**
+     * Устанавливает уровень логирования, указанный
+     * в properties файле
+     * @param level уровень логирования
+     * @param loggerContext контекст логирования
+     */
     private void setLogLevel(LogLevel level, LoggerContext loggerContext) {
         loggerContext.getConfiguration().getRootLogger().setLevel(Level.getLevel(level.name()));
     }

@@ -15,15 +15,29 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Аспект, логирующий работу методов
+ * @author Yuri Luttsev
+ */
 @Aspect
 public class LoggingAspect {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+    /**
+     * Точка среза для всех методов с аннотацией {@link AuditLog @AuditLog}
+     * @param auditLog аннотация для логирования
+     */
     @Pointcut("@annotation(auditLog)")
     public void annotatedMethods(AuditLog auditLog) {
     }
 
+    /**
+     * Advice логирования работы метода
+     * @param joinPoint точка среза метода
+     * @param auditLog аннотация логирования
+     * @throws Throwable ошибка для прокидывания исключения дальше
+     */
     @Around(value = "annotatedMethods(auditLog)", argNames = "joinPoint, auditLog")
     public void logMethod(ProceedingJoinPoint joinPoint, AuditLog auditLog) throws Throwable {
 
@@ -50,6 +64,10 @@ public class LoggingAspect {
         }
     }
 
+    /**
+     * Метод для добавления аппендера для логгера
+     * @param appender аппендер логирования
+     */
     public void addAppender(Appender appender) {
         ((org.apache.logging.log4j.core.Logger) this.logger).addAppender(appender);
     }
@@ -63,6 +81,11 @@ public class LoggingAspect {
         return List.of("none");
     }
 
+    /**
+     * Преобразует локальный enum {@link LogLevel LogLevel} в {@link Level Level} библиотеки log4j2
+     * @param logLevel локальный enum уровней логирования
+     * @return уровень логирования для log4j2
+     */
     private Level getLogLevel(LogLevel logLevel) {
         return Level.getLevel(logLevel.name());
     }
