@@ -1,6 +1,5 @@
 package ru.luttsev.springbootstarterauditlib.aspect;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.Appender;
@@ -17,6 +16,7 @@ import java.util.Objects;
 
 /**
  * Аспект, логирующий работу методов
+ *
  * @author Yuri Luttsev
  */
 @Aspect
@@ -26,6 +26,7 @@ public class LoggingAspect {
 
     /**
      * Точка среза для всех методов с аннотацией {@link AuditLog @AuditLog}
+     *
      * @param auditLog аннотация для логирования
      */
     @Pointcut("@annotation(auditLog)")
@@ -34,8 +35,9 @@ public class LoggingAspect {
 
     /**
      * Advice логирования работы метода
+     *
      * @param joinPoint точка среза метода
-     * @param auditLog аннотация логирования
+     * @param auditLog  аннотация логирования
      * @throws Throwable ошибка для прокидывания исключения дальше
      */
     @Around(value = "annotatedMethods(auditLog)", argNames = "joinPoint, auditLog")
@@ -51,7 +53,7 @@ public class LoggingAspect {
                     String.join(", ", parameters),
                     Objects.nonNull(returnType) ? returnType.toString() : "void"
             );
-            logger.log(getLogLevel(auditLog.logLevel()), logMessage);
+            logger.log(LogLevel.toLog4j2Level(auditLog.logLevel()), logMessage);
         } catch (Throwable e) {
             String messageAfterThrowing = "Method name: %s; Args: %s; Throw: %s";
             String logMessage = messageAfterThrowing.formatted(
@@ -59,13 +61,14 @@ public class LoggingAspect {
                     String.join(", ", parameters),
                     e.getClass().getName()
             );
-            logger.log(getLogLevel(auditLog.logLevel()), logMessage);
+            logger.log(LogLevel.toLog4j2Level(auditLog.logLevel()), logMessage);
             throw e;
         }
     }
 
     /**
      * Метод для добавления аппендера для логгера
+     *
      * @param appender аппендер логирования
      */
     public void addAppender(Appender appender) {
@@ -79,15 +82,6 @@ public class LoggingAspect {
                     .toList();
         }
         return List.of("none");
-    }
-
-    /**
-     * Преобразует локальный enum {@link LogLevel LogLevel} в {@link Level Level} библиотеки log4j2
-     * @param logLevel локальный enum уровней логирования
-     * @return уровень логирования для log4j2
-     */
-    private Level getLogLevel(LogLevel logLevel) {
-        return Level.getLevel(logLevel.name());
     }
 
 }

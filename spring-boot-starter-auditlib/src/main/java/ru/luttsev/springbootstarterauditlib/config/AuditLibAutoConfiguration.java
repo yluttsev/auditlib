@@ -3,12 +3,16 @@ package ru.luttsev.springbootstarterauditlib.config;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.event.EventListener;
 import ru.luttsev.springbootstarterauditlib.LogLevel;
+import ru.luttsev.springbootstarterauditlib.advice.HttpRequestLoggingAdvice;
+import ru.luttsev.springbootstarterauditlib.advice.HttpResponseLoggingAdvice;
 import ru.luttsev.springbootstarterauditlib.aspect.LoggingAspect;
 
 import java.util.Objects;
@@ -35,28 +39,43 @@ public class AuditLibAutoConfiguration {
     /**
      * Настройка {@link LoggingAspect аспекта} для логирования<br>
      * Устанавливает аппендер, указанный в application.properties
+     *
      * @return {@link LoggingAspect аспект} для логирования
      */
     @Bean
     public LoggingAspect loggingAspect() {
-        LoggingAspect loggingAspect = new LoggingAspect();
+        return new LoggingAspect();
+    }
+
+    @Bean
+    public HttpRequestLoggingAdvice httpRequestLoggingAdvice() {
+        return new HttpRequestLoggingAdvice();
+    }
+
+    @Bean
+    public HttpResponseLoggingAdvice httpResponseLoggingAdvice() {
+        return new HttpResponseLoggingAdvice();
+    }
+
+    @EventListener(ApplicationContextInitializedEvent.class)
+    public void setConfiguration() {
         if (Objects.nonNull(appenderConfig.getAppender()) && Objects.nonNull(appenderConfig.getLevel())) {
             switch (appenderConfig.getAppender()) {
                 case "console" -> {
                     LoggerContext context = (LoggerContext) LogManager.getContext(false);
                     context.getConfiguration().getRootLogger().removeAppender("FileAppender");
-                    context.updateLoggers();
                     setLogLevel(LogLevel.valueOf(appenderConfig.getLevel()), context);
+                    context.updateLoggers();
                 }
                 case "file" -> {
                     LoggerContext context = LoggerContext.getContext(false);
                     context.getConfiguration().getRootLogger().removeAppender("ConsoleAppender");
-                    context.updateLoggers();
                     setLogLevel(LogLevel.valueOf(appenderConfig.getLevel()), context);
+                    context.updateLoggers();
                 }
-                default -> throw new IllegalArgumentException("Unknown parameter: %s".formatted(appenderConfig.getAppender()));
+                default ->
+                        throw new IllegalArgumentException("Unknown parameter: %s".formatted(appenderConfig.getAppender()));
             }
-            return loggingAspect;
         }
         throw new IllegalArgumentException("One or more logging parameters are not specified in the application.properties file");
     }
@@ -64,7 +83,8 @@ public class AuditLibAutoConfiguration {
     /**
      * Устанавливает уровень логирования, указанный
      * в properties файле
-     * @param level уровень логирования
+     *
+     * @param level         уровень логирования
      * @param loggerContext контекст логирования
      */
     private void setLogLevel(LogLevel level, LoggerContext loggerContext) {
