@@ -12,7 +12,7 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
@@ -22,11 +22,21 @@ import ru.luttsev.springbootstarterauditlib.annotation.WebAuditLog;
 import java.lang.annotation.Annotation;
 import java.util.Objects;
 
-@ControllerAdvice
+/**
+ * Advice для перехвата HTTP ответов
+ * @author Yuri Luttsev
+ */
+@RestControllerAdvice
 public class HttpResponseLoggingAdvice implements ResponseBodyAdvice<Object> {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+    /**
+     * Проверка на совместимость перехватчика
+     * @param returnType тип возвращаемого значения метода
+     * @param converterType тип конвертера http сообщений
+     * @return поддержка метода
+     */
     @Override
     public boolean supports(@NonNull MethodParameter returnType,
                             @NonNull Class<? extends HttpMessageConverter<?>> converterType) {
@@ -38,6 +48,16 @@ public class HttpResponseLoggingAdvice implements ResponseBodyAdvice<Object> {
         return false;
     }
 
+    /**
+     * Логирует данные про http запрос, а затем про http ответ
+     * @param body тело ответа
+     * @param returnType тип возвращаемого значения метода
+     * @param selectedContentType тип контента
+     * @param selectedConverterType тип конвертера
+     * @param request http запрос
+     * @param response http ответ
+     * @return тело ответа
+     */
     @Override
     public Object beforeBodyWrite(@Nullable Object body,
                                   @NonNull MethodParameter returnType,

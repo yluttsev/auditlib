@@ -37,9 +37,7 @@ public class AuditLibAutoConfiguration {
     }
 
     /**
-     * Настройка {@link LoggingAspect аспекта} для логирования<br>
-     * Устанавливает аппендер, указанный в application.properties
-     *
+     * Бин аспекта для логирования работы методов
      * @return {@link LoggingAspect аспект} для логирования
      */
     @Bean
@@ -47,16 +45,28 @@ public class AuditLibAutoConfiguration {
         return new LoggingAspect();
     }
 
+    /**
+     * Бин эдвайса для логирования http запросов
+     * @return {@link HttpRequestLoggingAdvice эдвайс} для логирования
+     */
     @Bean
     public HttpRequestLoggingAdvice httpRequestLoggingAdvice() {
         return new HttpRequestLoggingAdvice();
     }
 
+    /**
+     * Бин эдвайса для логирования http ответов
+     * @return {@link HttpResponseLoggingAdvice эдвайс} для логирования
+     */
     @Bean
     public HttpResponseLoggingAdvice httpResponseLoggingAdvice() {
         return new HttpResponseLoggingAdvice();
     }
 
+    /**
+     * До инициализации всех бинов приложения<br>
+     * устанавливает настройки логера, указанных в application.properties
+     */
     @EventListener(ApplicationContextInitializedEvent.class)
     public void setConfiguration() {
         if (Objects.nonNull(appenderConfig.getAppender()) && Objects.nonNull(appenderConfig.getLevel())) {
