@@ -22,20 +22,20 @@ import ru.luttsev.springbootstarterauditlib.aspect.LoggingAspect;
 @Configuration
 @ComponentScan("ru.luttsev.springbootstarterauditlib")
 @PropertySource("classpath:application.properties")
-@EnableConfigurationProperties(AppenderConfig.class)
+@EnableConfigurationProperties(AuditLibProperties.class)
 public class AuditLibAutoConfiguration {
 
     /**
-     * {@link AppenderConfig Конфигурация} в properties файле
+     * {@link AuditLibProperties Конфигурация} в properties файле
      */
-    private final AppenderConfig appenderConfig;
+    private final AuditLibProperties auditLibProperties;
 
     private final LoggerContext loggerContext;
 
     private final Logger mainLogger;
 
-    public AuditLibAutoConfiguration(AppenderConfig appenderConfig) {
-        this.appenderConfig = appenderConfig;
+    public AuditLibAutoConfiguration(AuditLibProperties auditLibProperties) {
+        this.auditLibProperties = auditLibProperties;
         this.loggerContext = LoggerContext.getContext(false);
         this.mainLogger = (Logger) LogManager.getLogger("ru.luttsev.springbootstarterauditlib");
     }
@@ -73,8 +73,8 @@ public class AuditLibAutoConfiguration {
      */
     @PostConstruct
     public void configureLogger() {
-        configureAppender(appenderConfig.getAppender());
-        configureLogLevel(appenderConfig.getLevel());
+        configureAppender(auditLibProperties.getAppender());
+        configureLogLevel(auditLibProperties.getLevel());
     }
 
     private void configureLogLevel(String logLevel) {
