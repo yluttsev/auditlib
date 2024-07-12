@@ -17,6 +17,7 @@ import ru.luttsev.springbootstarterauditlib.aspect.LoggingAspect;
 
 /**
  * Автоконфигурация библиотеки
+ *
  * @author Yuri Luttsev
  */
 @Configuration
@@ -41,7 +42,8 @@ public class AuditLibAutoConfiguration {
     }
 
     /**
-     * Бин аспекта для логирования работы методов
+     * Aspect для логирования работы методов
+     *
      * @return {@link LoggingAspect аспект} для логирования
      */
     @Bean
@@ -50,7 +52,8 @@ public class AuditLibAutoConfiguration {
     }
 
     /**
-     * Бин эдвайса для логирования http запросов
+     * Advice для логирования HTTP запросов
+     *
      * @return {@link HttpRequestLoggingAdvice эдвайс} для логирования
      */
     @Bean
@@ -59,7 +62,8 @@ public class AuditLibAutoConfiguration {
     }
 
     /**
-     * Бин эдвайса для логирования http ответов
+     * Advice для логирования HTTP ответов
+     *
      * @return {@link HttpResponseLoggingAdvice эдвайс} для логирования
      */
     @Bean
@@ -68,8 +72,7 @@ public class AuditLibAutoConfiguration {
     }
 
     /**
-     * До инициализации всех бинов приложения<br>
-     * устанавливает настройки логера, указанных в application.properties
+     * Конфигурация логгера из properties файла
      */
     @PostConstruct
     public void configureLogger() {
@@ -77,10 +80,20 @@ public class AuditLibAutoConfiguration {
         configureLogLevel(auditLibProperties.getLevel());
     }
 
+    /**
+     * Конфигурация уровня логирования из properties файла
+     *
+     * @param logLevel {@link LogLevel уровень логирования}
+     */
     private void configureLogLevel(String logLevel) {
         this.mainLogger.setLevel(LogLevel.toLog4j2Level(LogLevel.valueOf(logLevel)));
     }
 
+    /**
+     * Конфигурация аппендера из properties файла
+     *
+     * @param appender аппендер логирования
+     */
     private void configureAppender(String appender) {
         switch (appender) {
             case "console" -> {
@@ -93,7 +106,8 @@ public class AuditLibAutoConfiguration {
                         .getAppender("ConsoleAppender");
                 this.mainLogger.removeAppender(consoleAppender);
             }
-            case "all" -> { }
+            case "all" -> {
+            }
             default -> throw new IllegalArgumentException("Unknown parameter: %s".formatted(appender));
         }
     }

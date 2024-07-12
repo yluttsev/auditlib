@@ -24,6 +24,7 @@ import java.util.Objects;
 
 /**
  * Advice для перехвата HTTP ответов
+ *
  * @author Yuri Luttsev
  */
 @RestControllerAdvice
@@ -33,7 +34,8 @@ public class HttpResponseLoggingAdvice implements ResponseBodyAdvice<Object> {
 
     /**
      * Проверка на совместимость перехватчика
-     * @param returnType тип возвращаемого значения метода
+     *
+     * @param returnType    тип возвращаемого значения метода
      * @param converterType тип конвертера http сообщений
      * @return поддержка метода
      */
@@ -50,12 +52,13 @@ public class HttpResponseLoggingAdvice implements ResponseBodyAdvice<Object> {
 
     /**
      * Логирует данные про http запрос, а затем про http ответ
-     * @param body тело ответа
-     * @param returnType тип возвращаемого значения метода
-     * @param selectedContentType тип контента
+     *
+     * @param body                  тело ответа
+     * @param returnType            тип возвращаемого значения метода
+     * @param selectedContentType   тип контента
      * @param selectedConverterType тип конвертера
-     * @param request http запрос
-     * @param response http ответ
+     * @param request               http запрос
+     * @param response              http ответ
      * @return тело ответа
      */
     @Override

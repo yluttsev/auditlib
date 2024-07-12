@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Level;
 
 /**
  * Уровни логирования
+ *
  * @author Yuri Luttsev
  */
 public enum LogLevel {
@@ -12,6 +13,7 @@ public enum LogLevel {
 
     /**
      * Преобразует локальный enum {@link LogLevel LogLevel} в {@link Level Level} библиотеки log4j2
+     *
      * @param logLevel локальный enum уровней логирования
      * @return уровень логирования для log4j2
      */

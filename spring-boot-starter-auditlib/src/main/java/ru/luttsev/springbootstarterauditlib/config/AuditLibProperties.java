@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Кофигурация библиотеки
+ *
  * @author Yuri Luttsev
  */
 @Configuration

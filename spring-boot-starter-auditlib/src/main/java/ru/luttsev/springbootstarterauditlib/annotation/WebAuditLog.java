@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * Аннотация для логирования http эндпоинта
+ *
  * @author Yuri Luttsev
  */
 @Target(ElementType.METHOD)
@@ -17,6 +18,7 @@ public @interface WebAuditLog {
 
     /**
      * Устанавливает уровень логирования
+     *
      * @return уровень логирования
      */
     LogLevel logLevel();
