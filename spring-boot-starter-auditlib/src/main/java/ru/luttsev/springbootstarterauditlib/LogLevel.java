@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Level;
  */
 public enum LogLevel {
 
-    TRACE, DEBUG, INFO, WARN, ERROR, FATAL;
+    ALL, TRACE, DEBUG, INFO, WARN, ERROR, FATAL, OFF;
 
     /**
      * Преобразует локальный enum {@link LogLevel LogLevel} в {@link Level Level} библиотеки log4j2
