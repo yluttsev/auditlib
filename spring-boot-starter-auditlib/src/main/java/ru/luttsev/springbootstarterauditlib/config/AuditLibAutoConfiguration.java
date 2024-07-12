@@ -5,10 +5,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import ru.luttsev.springbootstarterauditlib.LogLevel;
 import ru.luttsev.springbootstarterauditlib.advice.HttpRequestLoggingAdvice;
@@ -20,7 +20,7 @@ import ru.luttsev.springbootstarterauditlib.aspect.LoggingAspect;
  *
  * @author Yuri Luttsev
  */
-@Configuration
+@AutoConfiguration
 @ComponentScan("ru.luttsev.springbootstarterauditlib")
 @PropertySource("classpath:application.properties")
 @EnableConfigurationProperties(AuditLibProperties.class)
