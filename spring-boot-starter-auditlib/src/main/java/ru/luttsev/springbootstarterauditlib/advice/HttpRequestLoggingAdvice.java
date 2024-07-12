@@ -21,6 +21,7 @@ import java.util.Objects;
 
 /**
  * Advice для перехвата HTTP запросов
+ *
  * @author Yuri Luttsev
  */
 @RestControllerAdvice
@@ -30,9 +31,10 @@ public class HttpRequestLoggingAdvice implements RequestBodyAdvice {
 
     /**
      * Проверка на совместимость перехватчика
+     *
      * @param methodParameter параметр метода
-     * @param targetType тип для преобразования тела запроса
-     * @param converterType тип конвертера, преобразующего тело запроса
+     * @param targetType      тип для преобразования тела запроса
+     * @param converterType   тип конвертера, преобразующего тело запроса
      * @return поддержка метода
      */
     @Override
@@ -49,9 +51,10 @@ public class HttpRequestLoggingAdvice implements RequestBodyAdvice {
 
     /**
      * Обработка тела запроса до прочтения
-     * @param inputMessage http сообщение
-     * @param parameter параметр метода
-     * @param targetType тип для преобразования тела запроса
+     *
+     * @param inputMessage  http сообщение
+     * @param parameter     параметр метода
+     * @param targetType    тип для преобразования тела запроса
      * @param converterType тип конвертера, преобразующего тело запроса
      * @return http сообщение
      */
@@ -65,10 +68,11 @@ public class HttpRequestLoggingAdvice implements RequestBodyAdvice {
 
     /**
      * Обработка тела запроса после прочтения
-     * @param body тело запроса
-     * @param inputMessage http сообщение
-     * @param parameter параметр метода
-     * @param targetType тип для преобразования тела запроса
+     *
+     * @param body          тело запроса
+     * @param inputMessage  http сообщение
+     * @param parameter     параметр метода
+     * @param targetType    тип для преобразования тела запроса
      * @param converterType тип конвертера, преобразующего тело запроса
      * @return тело запроса
      */
@@ -93,10 +97,11 @@ public class HttpRequestLoggingAdvice implements RequestBodyAdvice {
 
     /**
      * Обработка пустого тела запроса
-     * @param body тело запроса
-     * @param inputMessage http сообщение
-     * @param parameter параметр метода
-     * @param targetType тип для преобразования тела запроса
+     *
+     * @param body          тело запроса
+     * @param inputMessage  http сообщение
+     * @param parameter     параметр метода
+     * @param targetType    тип для преобразования тела запроса
      * @param converterType тип конвертера, преобразующего тело запроса
      * @return тело запроса
      */
