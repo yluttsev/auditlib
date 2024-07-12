@@ -14,12 +14,12 @@ public class AppenderConfig {
     /**
      * Appender для логирования работы методов
      */
-    private String appender;
+    private String appender = "console";
 
     /**
      * Уровень логирования
      */
-    private String level;
+    private String level = "INFO";
 
     public String getAppender() {
         return appender;
