@@ -20,7 +20,7 @@ public class AuditLibProperties {
     /**
      * Уровень логирования
      */
-    private String level = "INFO";
+    private String logLevel = "INFO";
 
     public String getAppender() {
         return appender;
@@ -30,12 +30,12 @@ public class AuditLibProperties {
         this.appender = appender;
     }
 
-    public String getLevel() {
-        return level;
+    public String getLogLevel() {
+        return logLevel;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    public void setLogLevel(String logLevel) {
+        this.logLevel = logLevel;
     }
 
 }

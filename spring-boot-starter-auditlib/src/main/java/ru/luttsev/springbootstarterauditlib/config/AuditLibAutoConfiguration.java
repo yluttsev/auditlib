@@ -77,7 +77,7 @@ public class AuditLibAutoConfiguration {
     @PostConstruct
     public void configureLogger() {
         configureAppender(auditLibProperties.getAppender());
-        configureLogLevel(auditLibProperties.getLevel());
+        configureLogLevel(auditLibProperties.getLogLevel());
     }
 
     /**

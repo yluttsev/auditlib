@@ -8,7 +8,7 @@ import ru.luttsev.springbootstarterauditlib.config.AuditLibAutoConfiguration;
         classes = {AuditLibAutoConfiguration.class},
         properties = {
                 "auditlib.appender=console",
-                "auditlib.level=INFO"
+                "auditlib.log-level=INFO"
         })
 class SpringBootStarterAuditlibApplicationTests {
 
