@@ -93,6 +93,8 @@ public class AuditLibAutoConfiguration {
                         .getAppender("ConsoleAppender");
                 this.mainLogger.removeAppender(consoleAppender);
             }
+            case "all" -> { }
+            default -> throw new IllegalArgumentException("Unknown parameter: %s".formatted(appender));
         }
     }
 
