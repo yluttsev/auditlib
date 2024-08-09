@@ -10,6 +10,11 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import java.io.Serializable;
 
+/**
+ * Аппендер для отправки логов в кафку
+ *
+ * @author Yuri Luttsev
+ */
 @Plugin(name = "KafkaAppender", category = "Core", elementType = "appender", printObject = true)
 public class KafkaAppender extends AbstractAppender {
 
