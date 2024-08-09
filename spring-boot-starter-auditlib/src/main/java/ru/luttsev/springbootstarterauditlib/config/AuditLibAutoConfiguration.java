@@ -23,6 +23,7 @@ import ru.luttsev.springbootstarterauditlib.advice.HttpRequestLoggingAdvice;
 import ru.luttsev.springbootstarterauditlib.advice.HttpResponseLoggingAdvice;
 import ru.luttsev.springbootstarterauditlib.appender.KafkaAppender;
 import ru.luttsev.springbootstarterauditlib.aspect.LoggingAspect;
+import ru.luttsev.springbootstarterauditlib.model.KafkaMessage;
 
 import java.util.HashMap;
 
@@ -42,6 +43,9 @@ public class AuditLibAutoConfiguration {
     private final LoggerContext loggerContext;
 
     private final Logger mainLogger;
+
+    @Value("${spring.application.name}")
+    private String serviceName;
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
@@ -107,7 +111,8 @@ public class AuditLibAutoConfiguration {
                 false,
                 new Property[]{Property.createProperty("bootstrap.servers", bootstrapServers)},
                 kafkaTemplate(),
-                auditLibProperties.getKafkaTopicName());
+                auditLibProperties.getKafkaTopicName(),
+                serviceName);
         kafkaAppender.start();
         return kafkaAppender;
     }
