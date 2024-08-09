@@ -1,5 +1,7 @@
 package ru.luttsev.springbootstarterauditlib.config;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -10,6 +12,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConfigurationProperties(prefix = "auditlib")
+@Getter
+@Setter
 public class AuditLibProperties {
 
     /**
@@ -22,20 +26,8 @@ public class AuditLibProperties {
      */
     private String logLevel = "INFO";
 
-    public String getAppender() {
-        return appender;
-    }
-
-    public void setAppender(String appender) {
-        this.appender = appender;
-    }
-
-    public String getLogLevel() {
-        return logLevel;
-    }
-
-    public void setLogLevel(String logLevel) {
-        this.logLevel = logLevel;
-    }
-
+    /**
+     * Название топика Kafka
+     */
+    private String kafkaTopicName = "default";
 }
