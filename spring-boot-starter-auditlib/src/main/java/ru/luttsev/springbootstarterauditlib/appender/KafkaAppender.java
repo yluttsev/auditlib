@@ -1,7 +1,5 @@
 package ru.luttsev.springbootstarterauditlib.appender;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Layout;
@@ -24,20 +22,17 @@ import java.io.Serializable;
 @Plugin(name = "KafkaAppender", category = "Core", elementType = "appender", printObject = true)
 public class KafkaAppender extends AbstractAppender {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, KafkaMessage> kafkaTemplate;
 
     private final String topicName;
 
     private final String serviceName;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     public KafkaAppender(String name,
                          Filter filter,
                          Layout<? extends Serializable> layout,
                          boolean ignoreExceptions,
-                         Property[] properties,
-                         KafkaTemplate<String, String> kafkaTemplate,
+                         Property[] properties, KafkaTemplate<String, KafkaMessage> kafkaTemplate,
                          String topicName,
                          @Value("${spring.application.name}") String serviceName) {
         super(name, filter, layout, ignoreExceptions, properties);
@@ -52,18 +47,7 @@ public class KafkaAppender extends AbstractAppender {
                 .serviceName(serviceName)
                 .message(event.getMessage().getFormattedMessage())
                 .build();
-        kafkaTemplate.executeInTransaction(
-                operations -> {
-                    try {
-                        return operations.send(
-                                topicName, objectMapper.writeValueAsString(message)
-                        );
-                    } catch (JsonProcessingException e) {
-                        log.error("JSON parse error.");
-                        throw new RuntimeException(e);
-                    }
-                }
-        );
+        kafkaTemplate.executeInTransaction(operations -> operations.send(topicName, message));
     }
 
 }
