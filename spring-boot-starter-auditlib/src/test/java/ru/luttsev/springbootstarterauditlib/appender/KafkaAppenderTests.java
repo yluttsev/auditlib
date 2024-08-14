@@ -1,8 +1,6 @@
 package ru.luttsev.springbootstarterauditlib.appender;
 
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.core.layout.PatternLayout;
@@ -25,18 +23,16 @@ import static org.mockito.Mockito.when;
 class KafkaAppenderTests {
 
     @Mock
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, KafkaMessage> kafkaTemplate;
 
     @Mock
-    private KafkaOperations<String, String> kafkaOperations;
+    private KafkaOperations<String, KafkaMessage> kafkaOperations;
 
     private final String topicName = "test";
 
     private String serviceName = "test-service";
 
     private KafkaAppender kafkaAppender;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setup() {
@@ -51,14 +47,14 @@ class KafkaAppenderTests {
     }
 
     @Test
-    void testSendLogMessageInKafka() throws JsonProcessingException {
+    void testSendLogMessageInKafka() {
         KafkaMessage message = KafkaMessage.builder()
                 .serviceName(serviceName)
                 .message("test message")
                 .build();
         ReflectionTestUtils.setField(kafkaAppender, "topicName", topicName);
         when(kafkaTemplate.executeInTransaction(any())).thenAnswer(mockResult -> {
-            KafkaOperations.OperationsCallback<String, String, Object> operationsCallback = mockResult.getArgument(0);
+            KafkaOperations.OperationsCallback<String, KafkaMessage, Object> operationsCallback = mockResult.getArgument(0);
             return operationsCallback.doInOperations(kafkaOperations);
         });
 
@@ -66,7 +62,7 @@ class KafkaAppenderTests {
                 .setMessage(SimpleMessageFactory.INSTANCE.newMessage(message.getMessage()))
                 .setLevel(Level.INFO)
                 .build());
-        verify(kafkaOperations).send(topicName, objectMapper.writeValueAsString(message));
+        verify(kafkaOperations).send(topicName, message);
     }
 
 }
