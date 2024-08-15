@@ -17,9 +17,19 @@ import org.springframework.context.annotation.Configuration;
 public class AuditLibProperties {
 
     /**
-     * Appender для логирования работы методов
+     * Логирование в консоль
      */
-    private String appender = "console";
+    private Boolean enableConsoleLogging = true;
+
+    /**
+     * Логирование в файл
+     */
+    private Boolean enableFileLogging;
+
+    /**
+     * Логирование в топик кафки
+     */
+    private Boolean enableKafkaLogging;
 
     /**
      * Уровень логирования

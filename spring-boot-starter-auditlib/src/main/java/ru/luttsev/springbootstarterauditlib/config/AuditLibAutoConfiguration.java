@@ -11,6 +11,7 @@ import org.apache.logging.log4j.core.config.Property;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -39,17 +40,17 @@ import java.util.HashMap;
 @EnableConfigurationProperties(AuditLibProperties.class)
 public class AuditLibAutoConfiguration {
 
+    @Value("${spring.kafka.bootstrap-servers:#{null}}")
+    private String bootstrapServers;
+
+    @Value("${spring.application.name}")
+    private String serviceName;
+
     private final AuditLibProperties auditLibProperties;
 
     private final LoggerContext loggerContext;
 
     private final Logger mainLogger;
-
-    @Value("${spring.application.name}")
-    private String serviceName;
-
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
 
     public AuditLibAutoConfiguration(AuditLibProperties auditLibProperties) {
         this.auditLibProperties = auditLibProperties;
@@ -57,6 +58,7 @@ public class AuditLibAutoConfiguration {
         this.mainLogger = (Logger) LogManager.getLogger("ru.luttsev.springbootstarterauditlib");
     }
 
+    @ConditionalOnProperty(name = "auditlib.enable-kafka-logging", havingValue = "true")
     @Bean
     public ProducerFactory<String, KafkaMessage> producerFactory() {
         HashMap<String, Object> properties = new HashMap<>();
@@ -69,6 +71,7 @@ public class AuditLibAutoConfiguration {
         return new DefaultKafkaProducerFactory<>(properties);
     }
 
+    @ConditionalOnProperty(name = "auditlib.enable-kafka-logging", havingValue = "true")
     @Bean
     public KafkaTemplate<String, KafkaMessage> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
@@ -104,6 +107,7 @@ public class AuditLibAutoConfiguration {
         return new HttpResponseLoggingAdvice();
     }
 
+    @ConditionalOnProperty(name = "auditlib.enable-kafka-logging", havingValue = "true")
     @Bean
     public Appender kafkaAppender() {
         KafkaAppender kafkaAppender = new KafkaAppender("KafkaAppender",
@@ -123,7 +127,7 @@ public class AuditLibAutoConfiguration {
      */
     @PostConstruct
     public void configureLogger() {
-        configureAppender(auditLibProperties.getAppender());
+        configureAppender(auditLibProperties);
         configureLogLevel(auditLibProperties.getLogLevel());
     }
 
@@ -139,22 +143,21 @@ public class AuditLibAutoConfiguration {
     /**
      * Конфигурация аппендера из properties файла
      *
-     * @param appender аппендер логирования
+     * @param properties конфигурация в application.properties
      */
-    private void configureAppender(String appender) {
-        switch (appender) {
-            case "console" -> {
-                Appender fileAppender = this.loggerContext.getConfiguration()
-                        .getAppender("FileAppender");
-                this.mainLogger.removeAppender(fileAppender);
-            }
-            case "file" -> {
-                Appender consoleAppender = this.loggerContext.getConfiguration()
-                        .getAppender("ConsoleAppender");
-                this.mainLogger.removeAppender(consoleAppender);
-            }
-            case "kafka", "all" -> this.mainLogger.addAppender(kafkaAppender());
-            default -> throw new IllegalArgumentException("Unknown parameter: %s".formatted(appender));
+    private void configureAppender(AuditLibProperties properties) {
+        if (properties.getEnableConsoleLogging() != null && !properties.getEnableConsoleLogging()) {
+            Appender consoleAppender = this.loggerContext.getConfiguration()
+                    .getAppender("ConsoleAppender");
+            this.mainLogger.removeAppender(consoleAppender);
+        }
+        if (properties.getEnableFileLogging() != null && !properties.getEnableFileLogging()) {
+            Appender fileAppender = this.loggerContext.getConfiguration()
+                    .getAppender("FileAppender");
+            this.mainLogger.removeAppender(fileAppender);
+        }
+        if (properties.getEnableKafkaLogging() != null && properties.getEnableKafkaLogging()) {
+            this.mainLogger.addAppender(kafkaAppender());
         }
     }
 

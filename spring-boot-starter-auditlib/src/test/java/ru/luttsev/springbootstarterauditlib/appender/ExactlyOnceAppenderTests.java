@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -35,6 +36,9 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestPropertySource(properties = {
+        "auditlib.enable-kafka-logging=true"
+})
 @SpringJUnitConfig
 @Import(AuditLibAutoConfiguration.class)
 @ExtendWith(SpringContextRestarterExtension.class)
