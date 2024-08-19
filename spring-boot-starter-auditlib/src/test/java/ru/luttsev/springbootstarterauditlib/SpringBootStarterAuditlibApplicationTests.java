@@ -5,11 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.luttsev.springbootstarterauditlib.config.AuditLibAutoConfiguration;
 
 @SpringBootTest(
-        classes = {AuditLibAutoConfiguration.class},
-        properties = {
-                "auditlib.appender=console",
-                "auditlib.log-level=INFO"
-        })
+        classes = {AuditLibAutoConfiguration.class})
 class SpringBootStarterAuditlibApplicationTests {
 
     @Test
